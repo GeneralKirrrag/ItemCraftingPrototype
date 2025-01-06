@@ -7,6 +7,9 @@ public class Forge : MonoBehaviour
 {
     public InputAction inputAction;
     private bool playerInRange;
+    [SerializeField] private LayerMask playerLayer;
+
+    public ForgeMeter forgeMeter;
 
     private void Awake()
     {
@@ -18,22 +21,24 @@ public class Forge : MonoBehaviour
     private void OnDisable() => inputAction.Disable();
 
     private void OnTriggerEnter2D(Collider2D other) {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player")) {
+        if (((1 << other.gameObject.layer) & playerLayer) != 0) {
+            Debug.Log("Player Enter");
             playerInRange = true;
         }
     }
 
     private void OnTriggerExit2D(Collider2D other) {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player")) {
+        if (((1 << other.gameObject.layer) & playerLayer) != 0) {
             playerInRange = false;
         }
     }
 
     public void StartHeating(InputAction.CallbackContext context) {
-        Debug.Log("Heating: True");
+        if (playerInRange) forgeMeter.isHeating = true;
+        else forgeMeter.isHeating = false;
     }
 
     public void StopHeating(InputAction.CallbackContext context) {
-        Debug.Log("Heating: False");
+        forgeMeter.isHeating = false;
     }
 }

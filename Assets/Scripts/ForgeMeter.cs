@@ -6,12 +6,15 @@ using UnityEngine.UI;
 public class ForgeMeter : MonoBehaviour
 {
     public Slider heatSlider;
-    public float heatValue;
     public float maxHeatValue;
 
+    public bool isHeating;
+    public float heatSpeed;
+    public float coolSpeed;
+
     public Slider forgeSlider;
-    public float forgeValue;
     public float maxForgeValue;
+    public int strikeValue = 1;
 
     public void Start() {
         forgeSlider.maxValue = maxForgeValue;
@@ -19,11 +22,18 @@ public class ForgeMeter : MonoBehaviour
     }
 
     public void Update() {
-        LowerValueOverTime(heatValue, maxHeatValue, 1.5f);
+        if (isHeating)
+        {
+            heatSlider.value += heatSpeed * Time.deltaTime;
+        }
+        else
+        {
+            heatSlider.value -= coolSpeed * Time.deltaTime;
+        }
     }
 
-    public void LowerValueOverTime(float value, float maxValue, float speed) {
-        value -= Time.deltaTime * speed;
-        //Mathf.Clamp(value, 0, maxValue);
+    public void Strike()
+    {
+        if (heatSlider.value > 0f) forgeSlider.value += strikeValue;
     }
 }
